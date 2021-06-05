@@ -1,0 +1,17 @@
+---
+title: "HW2_APP link"
+author: "Xingyi Yang"
+date: "10/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Shinny APP link:
+
+<https://xingyiyang.shinyapps.io/HW2_APP_Xingyi/>
+
+
+

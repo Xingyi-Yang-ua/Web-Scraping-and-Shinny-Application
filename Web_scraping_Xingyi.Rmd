@@ -1,0 +1,96 @@
+---
+title: "HW2"
+author: "Xingyi Yang"
+date: "10/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r, echo = F, warning = F}
+    library("rvest")
+    library("tidyverse")
+    library("xml2")
+```
+```{r}
+    url <- 'https://www.federalreserve.gov/releases/lbr/'
+    (page <- xml2::read_html(url)) # xml2 is package
+```
+##### Get the year 
+```{r}
+# use CSS selector
+time<-page %>% 
+  rvest::html_nodes(".panel-heading--shaded") %>% #grab things embedded in the year classs
+  rvest::html_text() %>%  #grab the text associated with it
+  stringi::stri_trim_both()
+time
+```
+#### Get the Month
+```{r}
+page %>% 
+  rvest::html_nodes(".col-md-3+ .col-md-3 li:nth-child(1) a") %>%
+  rvest::html_text() %>%
+  stringi::stri_trim_both()
+```
+# get links CSS selectors
+```{r}
+  links <- page %>% 
+    rvest::html_nodes("div") %>%
+    rvest::html_nodes(xpath = '//li/a') %>%
+    rvest::html_attr("href")
+links<-links[164:227]
+links
+length(links)
+a<-seq(1,64,4)
+link_final<-links[a]
+link_final
+```
+```{r}
+  full_df <- data.frame()
+  company_data <- c()
+  branch_data <- c()
+  Consol_Assets <-c()
+  Domestic_Assets <- c()
+  Pct_Domestic_Assets <-c()
+  for(i in seq(1, length(link_final))) {
+    url <- paste0("https://www.federalreserve.gov/releases/lbr/", links[i])
+    page <- xml2::read_html(url)
+    
+    company_data[i] <- page %>%
+      rvest::html_nodes(".H+ table tr:nth-child(2) td:nth-child(1)")  %>% 
+      rvest::html_text() %>%
+      stringi::stri_trim_both()
+    
+    branch_data[i] <- page %>%
+      rvest::html_nodes("tr:nth-child(2) td:nth-child(11)")  %>% 
+      rvest::html_text() %>%
+      stringi::stri_trim_both()
+    
+    Consol_Assets[i] <- page %>%
+      rvest::html_nodes("tr:nth-child(2) td:nth-child(6)")  %>% 
+      rvest::html_text() %>%
+      stringi::stri_trim_both()
+    
+    Domestic_Assets[i] <- page %>%
+      rvest::html_nodes("tr:nth-child(2) td:nth-child(7)")  %>% 
+      rvest::html_text() %>%
+      stringi::stri_trim_both()
+    
+    Pct_Domestic_Assets[i] <- page %>%
+      rvest::html_nodes("tr:nth-child(2) td:nth-child(8)")  %>% 
+      rvest::html_text() %>%
+      stringi::stri_trim_both()
+  }
+  df <- data.frame(company_data, branch_data, Consol_Assets, Domestic_Assets, Pct_Domestic_Assets)
+  full_df <- rbind(full_df, df)
+  full_df
+```
+```{r}
+Year<-time[-c(1,18,19,20)]
+df<-cbind(Year,full_df)
+write.csv(df,'JPmorgan_data.csv')
+```
+
+
+
