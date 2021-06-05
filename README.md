@@ -1,4 +1,5 @@
-## Scraped Data from website:https://www.federalreserve.gov/releases/lbr/ , cleaned, plotted data, and built a Shiny application for visualization.
+
+Scraped Data from website:https://www.federalreserve.gov/releases/lbr/ , cleaned, plotted data, and built a Shiny application for visualization.
 
 ## Usages
 * `Web_scraping_Xingyi.Rmd` - the R code used to scrape the data from the website:https://www.federalreserve.gov/releases/lbr/
